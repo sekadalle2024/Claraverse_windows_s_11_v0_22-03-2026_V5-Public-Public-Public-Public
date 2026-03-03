@@ -34,7 +34,10 @@ import {
   FileSearch,
   CheckSquare,
   BookOpen,
-  HelpCircle
+  HelpCircle,
+  Settings,
+  GraduationCap,
+  Cog
 } from 'lucide-react';
 
 // ============================================================
@@ -44,14 +47,16 @@ import {
 interface ModeItem {
   id: string;
   label: string;
-  prefix: string;
+  prefix?: string;
+  command?: string;
 }
 
 interface EtapeItem {
   id: string;
   label: string;
   icon: React.ReactNode;
-  command: string;
+  command?: string;
+  modes?: ModeItem[];
   norme?: string; // Norme d'audit associée
 }
 
@@ -95,7 +100,8 @@ interface DemarrerMenuProps {
 const MODES: ModeItem[] = [
   { id: 'normal', label: 'Normal', prefix: '' },
   { id: 'demo', label: 'Demo', prefix: '[Demo] = Activate\n' },
-  { id: 'avance', label: 'Avancé', prefix: '[Mode] = Avancé\n' }
+  { id: 'avance', label: 'Avancé', prefix: '[Mode] = Avancé\n' },
+  { id: 'manuel', label: 'Manuel', prefix: '[Mode] = Manuel\n' }
 ];
 
 // ============================================================
@@ -205,14 +211,24 @@ const MENU_DATA: LogicielItem[] = [
             label: 'Synthèse des Frap',
             norme: '14.2 Analyses et constats potentiels de la mission',
             icon: <FileSearch className="w-4 h-4" />,
-            command: `[Command] = /Table synthese`
+            command: `[Command] = /Table synthese
+[Command Manuel] = Étape mission
+[Étape précédente] = Frap
+[Étape mission] = Synthèse des Frap
+[Modèle] = 
+[Pièces jointes] = Frap de la mission`
           },
           {
             id: 'rapport-provisoire',
             label: 'Rapport provisoire',
             norme: '14.5 Conclusions de la mission',
             icon: <FileText className="w-4 h-4" />,
-            command: `[Command] = /Table rapport_provisoire`
+            command: `[Command] = /Table rapport_provisoire
+[Command Manuel] = Étape mission
+[Étape précédente] = Synthèse des Frap
+[Étape mission] = Rapport provisoire
+[Modèle] = 
+[Pièces jointes] = Synthèse des Frap`
           },
           {
             id: 'reunion-cloture',
@@ -228,14 +244,24 @@ const MENU_DATA: LogicielItem[] = [
             label: 'Rapport final',
             norme: '15.1 Communication des résultats définitifs de la mission',
             icon: <FileCheck className="w-4 h-4" />,
-            command: `[Command] = /Table rapport_final`
+            command: `[Command] = /Table rapport_final
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport provisoire
+[Étape mission] = Rapport final
+[Modèle] = 
+[Pièces jointes] = Rapport provisoire`
           },
           {
             id: 'suivi-recos',
             label: 'Suivi des recos',
             norme: '15.2 Suivi des recommandations',
             icon: <CheckSquare className="w-4 h-4" />,
-            command: `[Command] = /Table suivi_recos`
+            command: `[Command] = /Table suivi_recos
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport final
+[Étape mission] = Suivi des recos
+[Modèle] = 
+[Pièces jointes] = Rapport final`
           }
         ]
       }
@@ -246,6 +272,180 @@ const MENU_DATA: LogicielItem[] = [
     label: 'E-revision',
     icon: <Calculator className="w-4 h-4" />,
     phases: [
+      {
+        id: 'planification',
+        label: 'Planification',
+        etapes: [
+          {
+            id: 'design',
+            label: 'Design',
+            icon: <Settings className="w-4 h-4" />,
+            modes: [
+              {
+                id: 'normal',
+                label: 'Normal',
+                command: `[Command] = Etape de mission
+[Processus] = rapprochements bancaires
+[test] : DD155
+[Etape précédente] = Prise de connaissance du domaine audite
+[Etape de mission] = Design
+[Modele] : Sous processus, Objectif de contrôle, Taches cle, Questionnaire identification risque, Assertion, Dispositif de maitrises des risques du client, Contrôle cle attendus, references documentaire, Anomalies, Conclusion
+[Directive] = Remplir toutes les colonnes en simulant des lignes satisfaisante t des lignes non satisfaisantes
+[Integration] = Design
+[Nb de lignes] = 10`
+              },
+              {
+                id: 'demo',
+                label: 'Demo',
+                command: `[Command] = Etape de mission
+[Processus] = rapprochements bancaires
+[test] : DD155
+[Etape précédente] = Prise de connaissance du domaine audite
+[Etape de mission] = Design
+[Modele] : Sous processus, Objectif de contrôle, Taches cle, Questionnaire identification risque, Assertion, Dispositif de maitrises des risques du client, Contrôle cle attendus, references documentaire, Anomalies, Conclusion
+[Directive] = Remplir toutes les colonnes en simulant des lignes satisfaisante t des lignes non satisfaisantes
+[Integration] = Design
+[Nb de lignes] = 10
+[Demo] = Activate`
+              }
+            ]
+          },
+          {
+            id: 'implementation',
+            label: 'Implementation',
+            icon: <Cog className="w-4 h-4" />,
+            modes: [
+              {
+                id: 'normal',
+                label: 'Normal',
+                command: `[Command] = Etape de mission
+[Processus] = rapprochements bancaires
+[test] : DD155
+[Etape précédente] = Design du contrôle interne
+[Etape de mission] = Implementation du contrôle interne
+[Contexte de base]
+Description de [Contexte de base]
+[Contexte de base] contient les resultat des test sur le Design. Notre objectif est de faire des test pour confirmer ou infirmer l implementation des controle cle selon les resultats des test de design
+Contenu de [Contexte de base]
+{ "Etape mission - Design": [ { "table 1": { "Etape": "Programme de travail / Questionnaire de Contrôle Interne", "Normes": "Norme 2240 - Programme de travail de la mission", "Reference": "PRG-TRESO-002", "Methode": "Méthode des assertions par les objectifs de contrôle" } }, { "table 2": [ { "no": 1, "Sous processus": "Organisation et Séparation des tâches", "Objectif de contrôle": "Garantir l'indépendance de la fonction de rapprochement bancaire.", "Taches cle": "Définition des rôles", "Questionnaire identification risque": "La personne effectuant le rapprochement est-elle indépendante de la tenue de la caisse et de l'émission des paiements ?", "Assertion": "Séparation des exercices", "Dispositif de maitrises des risques du client": "Le comptable fournisseurs effectue les paiements et réalise également le rapprochement bancaire sur le logiciel Sage.", "Contrôle cle attendus": "Le Responsable Administratif et Financier s'assure que l'agent en charge du rapprochement n'a pas accès aux moyens de paiement ni aux écritures de caisse.", "references documentaire": "Fiches de poste, Matrice des droits d'accès SI", "Anomalies": "Cumul de fonctions incompatible créant un risque de dissimulation de fraude.", "Conclusion": "Non-Satisfaisant" } ] } ] }
+[Modele] : Objectif de contrôle, Travaux a effectuer, Resultat, Tableau de test , Document de test, Echantillon, Conclusion
+[Integration] = Implementation_modelisation
+[Nb de lignes] = 25`
+              },
+              {
+                id: 'demo',
+                label: 'Demo',
+                command: `[Command] = Etape de mission
+[Processus] = rapprochements bancaires
+[test] : DD155
+[Etape précédente] = Design du contrôle interne
+[Etape de mission] = Implementation du contrôle interne
+[Contexte de base]
+Description de [Contexte de base]
+[Contexte de base] contient les resultat des test sur le Design. Notre objectif est de faire des test pour confirmer ou infirmer l implementation des controle cle selon les resultats des test de design
+Contenu de [Contexte de base]
+{ "Etape mission - Design": [ { "table 1": { "Etape": "Programme de travail / Questionnaire de Contrôle Interne", "Normes": "Norme 2240 - Programme de travail de la mission", "Reference": "PRG-TRESO-002", "Methode": "Méthode des assertions par les objectifs de contrôle" } }, { "table 2": [ { "no": 1, "Sous processus": "Organisation et Séparation des tâches", "Objectif de contrôle": "Garantir l'indépendance de la fonction de rapprochement bancaire.", "Taches cle": "Définition des rôles", "Questionnaire identification risque": "La personne effectuant le rapprochement est-elle indépendante de la tenue de la caisse et de l'émission des paiements ?", "Assertion": "Séparation des exercices", "Dispositif de maitrises des risques du client": "Le comptable fournisseurs effectue les paiements et réalise également le rapprochement bancaire sur le logiciel Sage.", "Contrôle cle attendus": "Le Responsable Administratif et Financier s'assure que l'agent en charge du rapprochement n'a pas accès aux moyens de paiement ni aux écritures de caisse.", "references documentaire": "Fiches de poste, Matrice des droits d'accès SI", "Anomalies": "Cumul de fonctions incompatible créant un risque de dissimulation de fraude.", "Conclusion": "Non-Satisfaisant" } ] } ] }
+[Modele] : Objectif de contrôle, Travaux a effectuer, Resultat, Tableau de test , Document de test, Echantillon, Conclusion
+[Integration] = Implementation_modelisation
+[Nb de lignes] = 25
+[Demo] = Activate`
+              }
+            ]
+          },
+          {
+            id: 'evaluation-risque',
+            label: 'Evaluation risque',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            modes: [
+              {
+                id: 'normal',
+                label: 'Normal',
+                command: `[Command] = Evaluation des risques
+[Processus] = Controle des rapprochements bancaires
+[Modele] : Sous processus, Taches cle, Assertion, risque, évaluation risque, probabilité, impact, controle audit
+[Matrice de criticite] = Matrice alphabetique - 4 niveau
+[Contexte de base]
+[Modelisation] : les informations des rapprochements bancaires
+[Integration] = Implementation_cartographie
+[Nb de lignes] = 25`
+              },
+              {
+                id: 'demo',
+                label: 'Demo',
+                command: `[Command] = Evaluation des risques
+[Processus] = Controle des rapprochements bancaires
+[Modele] : Sous processus, Taches cle, Assertion, risque, évaluation risque, probabilité, impact, controle audit
+[Matrice de criticite] = Matrice alphabetique - 4 niveau
+[Contexte de base]
+[Modelisation] : les informations des rapprochements bancaires
+[Integration] = Implementation_cartographie
+[Nb de lignes] = 25
+[Demo] = Activate`
+              }
+            ]
+          },
+          {
+            id: 'feuille-couverture-implementation',
+            label: 'Feuille de couverture implementation',
+            icon: <FileText className="w-4 h-4" />,
+            modes: [
+              {
+                id: 'normal',
+                label: 'Normal',
+                command: `[Command] = Couverture
+[Processus] = Controle des rapprochements bancaires
+[Contrôle] = voir table 2
+[Contexte de base]
+[Modelisation] : les informations des rapprochements bancaires
+[Integration] = Implementation_programme_controle
+[Nb de lignes] = 25`
+              },
+              {
+                id: 'demo',
+                label: 'Demo',
+                command: `[Command] = Couverture
+[Processus] = Controle des rapprochements bancaires
+[Contrôle] = voir table 2
+[Contexte de base]
+[Modelisation] : les informations des rapprochements bancaires
+[Integration] = Implementation_programme_controle
+[Nb de lignes] = 25
+[Demo] = Activate`
+              }
+            ]
+          },
+          {
+            id: 'programme-controle-comptes',
+            label: 'Programme de controle des comptes',
+            icon: <CheckSquare className="w-4 h-4" />,
+            modes: [
+              {
+                id: 'normal',
+                label: 'Normal',
+                command: `[Command] = Couverture
+[Processus] = Controle des rapprochements bancaires
+[Modele] : Cycle, Domaines, Test, Controle audit, Objectif, Evaluation globale des risques, Echantillon
+[Programme standard]
+[Modelisation] : les informations des rapprochements bancaires
+[Contexte de base]
+[Integration] = Programme_controle_comptes`
+              },
+              {
+                id: 'demo',
+                label: 'Demo',
+                command: `[Command] = Couverture
+[Processus] = Controle des rapprochements bancaires
+[Modele] : Cycle, Domaines, Test, Controle audit, Objectif, Evaluation globale des risques, Echantillon
+[Programme standard]
+[Modelisation] : les informations des rapprochements bancaires
+[Contexte de base]
+[Integration] = Programme_controle_comptes
+[Demo] = Activate`
+              }
+            ]
+          }
+        ]
+      },
       {
         id: 'revue-analytique',
         label: 'Revue analytique',
@@ -1567,25 +1767,45 @@ const MENU_DATA: LogicielItem[] = [
             id: 'synthese-frap',
             label: 'Synthèse des frap',
             icon: <FileSearch className="w-4 h-4" />,
-            command: `[Command] = /Table synthese`
+            command: `[Command] = /Table synthese
+[Command Manuel] = Étape mission
+[Étape précédente] = Frap
+[Étape mission] = Synthèse des Frap
+[Modèle] = 
+[Pièces jointes] = Frap de la mission`
           },
           {
             id: 'rapport-provisoire',
             label: 'Rapport provisoire',
             icon: <FileText className="w-4 h-4" />,
-            command: `[Command] = /Table rapport_provisoire`
+            command: `[Command] = /Table rapport_provisoire
+[Command Manuel] = Étape mission
+[Étape précédente] = Synthèse des Frap
+[Étape mission] = Rapport provisoire
+[Modèle] = 
+[Pièces jointes] = Synthèse des Frap`
           },
           {
             id: 'rapport-final',
             label: 'Rapport final',
             icon: <FileCheck className="w-4 h-4" />,
-            command: `[Command] = /Table rapport_final`
+            command: `[Command] = /Table rapport_final
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport provisoire
+[Étape mission] = Rapport final
+[Modèle] = 
+[Pièces jointes] = Rapport provisoire`
           },
           {
             id: 'suivi-recos',
             label: 'Suivi des recos',
             icon: <CheckSquare className="w-4 h-4" />,
-            command: `[Command] = /Table suivi_recos`
+            command: `[Command] = /Table suivi_recos
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport final
+[Étape mission] = Suivi des recos
+[Modèle] = 
+[Pièces jointes] = Rapport final`
           }
         ]
       }
@@ -1673,6 +1893,797 @@ const MENU_DATA: LogicielItem[] = [
     ]
   },
   {
+    id: 'e-controle',
+    label: 'E-contrôle',
+    icon: <Shield className="w-4 h-4" />,
+    phases: [
+      {
+        id: 'phase-preparation',
+        label: 'Phase de préparation',
+        etapes: [
+          {
+            id: 'cartographie-risques',
+            label: 'Cartographie des risques',
+            norme: '13.2 Évaluation des risques dans le cadre de la mission',
+            icon: <Map className="w-4 h-4" />,
+            command: `[Command] = Cartographie des risques
+[Processus] = inventaire de caisse
+[Risques critiques] = fraude
+[Objectif] = couvrir la fraude`
+          },
+          {
+            id: 'matrice-surveillance',
+            label: 'Matrice de surveillance permanente',
+            norme: '13.5 Surveillance permanente des risques',
+            icon: <BarChart3 className="w-4 h-4" />,
+            command: `[Command] = Etape de mission
+[Processus] = rapprochements bancaires
+[Etape précédente] = Cartographie des risques
+[Etape de mission] = Matrice de surveillance permanente
+[Modele] = Point de controle, risque, controle de premier niveau, controle de second niveau, document
+[Directives] = 
+[Nb de lignes] = 50`
+          }
+        ]
+      },
+      {
+        id: 'phase-realisation',
+        label: 'Phase de réalisation',
+        etapes: [
+          {
+            id: 'feuille-couverture',
+            label: 'Feuille couverture',
+            norme: '14.6 Documentation relative à la mission',
+            icon: <FileCheck className="w-4 h-4" />,
+            command: `[Command] = Couverture
+[Processus] = Sécurité trésorerie
+[Contrôle] = Verifier l exhaustivite des inventaires de caisse
+[Instruction] = Template
+[Nb de lignes] = 15
+[Modele de test] = no, compte, site, libelle, solde BG, Solde Pv inventaire`
+          }
+        ]
+      },
+      {
+        id: 'phase-conclusion',
+        label: 'Phase de conclusion',
+        etapes: [
+          {
+            id: 'frap',
+            label: 'Frap',
+            norme: '14.3 Évaluation des constats',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            command: `[Command] = Frap
+[Processus] = 
+[Constat] = 
+[Recommandation] = `
+          },
+          {
+            id: 'synthese-frap',
+            label: 'Synthèse des Frap',
+            norme: '14.2 Analyses et constats potentiels de la mission',
+            icon: <FileSearch className="w-4 h-4" />,
+            command: `[Command] = /Table synthese
+[Command Manuel] = Étape mission
+[Étape précédente] = Frap
+[Étape mission] = Synthèse des Frap
+[Modèle] = 
+[Pièces jointes] = Frap de la mission`
+          },
+          {
+            id: 'rapport-provisoire',
+            label: 'Rapport provisoire',
+            norme: '14.5 Conclusions de la mission',
+            icon: <FileText className="w-4 h-4" />,
+            command: `[Command] = /Table rapport_provisoire
+[Command Manuel] = Étape mission
+[Étape précédente] = Synthèse des Frap
+[Étape mission] = Rapport provisoire
+[Modèle] = 
+[Pièces jointes] = Synthèse des Frap`
+          },
+          {
+            id: 'reunion-cloture',
+            label: 'Réunion de clôture',
+            norme: '11.3 Communication des résultats',
+            icon: <CheckSquare className="w-4 h-4" />,
+            command: `[Command] = Réunion de clôture
+[Processus] = 
+[Objectif] = `
+          },
+          {
+            id: 'rapport-final',
+            label: 'Rapport final',
+            norme: '15.1 Communication des résultats définitifs de la mission',
+            icon: <FileCheck className="w-4 h-4" />,
+            command: `[Command] = /Table rapport_final
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport provisoire
+[Étape mission] = Rapport final
+[Modèle] = 
+[Pièces jointes] = Rapport provisoire`
+          },
+          {
+            id: 'suivi-recos',
+            label: 'Suivi des recos',
+            norme: '15.2 Suivi des recommandations',
+            icon: <CheckSquare className="w-4 h-4" />,
+            command: `[Command] = /Table suivi_recos
+[Command Manuel] = Étape mission
+[Étape précédente] = Rapport final
+[Étape mission] = Suivi des recos
+[Modèle] = 
+[Pièces jointes] = Rapport final`
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'e-cia-exam-part1',
+    label: 'E-CIA exam part 1',
+    icon: <GraduationCap className="w-4 h-4" />,
+    phases: [
+      {
+        id: 'section-a',
+        label: 'Section A - Fondements de l\'audit interne (35%)',
+        cycles: [
+          {
+            id: 'objectif-1',
+            label: 'Objectif 1 - Décrire l\'Objectif de l\'audit interne',
+            icon: <Target className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj1-point-a',
+                reference: '1.a',
+                label: 'Expliquer les objectifs globaux et les avantages',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Expliquer les objectifs globaux et les avantages de la fonction d'audit interne
+[Points] = Renforcer la capacité de l'organisation à créer, protéger et pérenniser la valeur
+
+[Command QCM] = Simulateur QCM
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Expliquer les objectifs globaux et les avantages de la fonction d'audit interne
+[Points] = Renforcer la capacité de l'organisation à créer, protéger et pérenniser la valeur
+
+[Command Synthèse] = synthèse
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Expliquer les objectifs globaux et les avantages de la fonction d'audit interne
+[Points] = Renforcer la capacité de l'organisation à créer, protéger et pérenniser la valeur`
+              },
+              {
+                id: 'obj1-point-b',
+                reference: '1.b',
+                label: 'Décrire les conditions d\'efficacité',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire les conditions qui contribuent à l'efficacité de la fonction d'audit interne
+[Points] = Réalisation par des professionnels qualifiés au regard des Normes`
+              }
+            ]
+          },
+          {
+            id: 'objectif-2',
+            label: 'Objectif 2 - Expliquer le mandat d\'audit interne',
+            icon: <FileText className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj2-point-i',
+                reference: '2.i',
+                label: 'Décrire l\'autorité, le rôle et les responsabilités',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire l'autorité, le rôle et les responsabilités de la fonction d'audit interne
+[Points] = L'autorité d'accès libre et illimité aux données, personnes et biens`
+              },
+              {
+                id: 'obj2-point-ii',
+                reference: '2.ii',
+                label: 'Expliquer le rôle du RAI',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Expliquer le rôle du chief audit executive (RAI) pour aider le conseil
+[Points] = Fourniture des informations nécessaires pour définir le mandat`
+              },
+              {
+                id: 'obj2-point-iii',
+                reference: '2.iii',
+                label: 'Expliquer le rôle du conseil et de la direction',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Expliquer le rôle du conseil et de la direction générale
+[Points] = Approbation de la charte intégrant le mandat et le périmètre`
+              }
+            ]
+          },
+          {
+            id: 'objectif-3',
+            label: 'Objectif 3 - Reconnaître les exigences d\'une charte',
+            icon: <ClipboardList className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj3-point-a',
+                reference: '3.a',
+                label: 'Identifier les composantes requises',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Identifier les composantes requises par les Normes mondiales d'audit interne
+[Points] = Mission, engagement envers les Normes et mandat spécifique`
+              },
+              {
+                id: 'obj3-point-b',
+                reference: '3.b',
+                label: 'Reconnaître l\'importance de discuter',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Reconnaître l'importance de discuter de la charte avec le conseil
+[Points] = Confirmation de la compréhension commune et des attentes`
+              },
+              {
+                id: 'obj3-point-c',
+                reference: '3.c',
+                label: 'Reconnaître l\'importance de l\'approbation',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Reconnaître l'importance de l'approbation par le conseil
+[Points] = Validation formelle comme socle de l'autorité de l'audit`
+              }
+            ]
+          },
+          {
+            id: 'objectif-4',
+            label: 'Objectif 4 - Interpréter les différences entre services',
+            icon: <BarChart3 className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj4-point-a',
+                reference: '4.a',
+                label: 'Définir les services d\'assurance',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Définir les services d'assurance
+[Points] = Évaluations objectives en vue de renforcer la confiance des parties prenantes`
+              },
+              {
+                id: 'obj4-point-b',
+                reference: '4.b',
+                label: 'Différencier l\'assurance limitée',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Différencier l'assurance limitée de l'assurance raisonnable
+[Points] = Variation selon la nature, le calendrier et l'étendue des tests`
+              },
+              {
+                id: 'obj4-point-c',
+                reference: '4.c',
+                label: 'Définir les services de conseil',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Définir les services de conseil
+[Points] = Avis et assistance sans endosser de responsabilités de gestion`
+              },
+              {
+                id: 'obj4-point-d',
+                reference: '4.d',
+                label: 'Décrire la détermination des services',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire comment la nature et le périmètre des services de conseil sont déterminés
+[Points] = Détermination conjointe entre auditeurs et direction de l'activité`
+              },
+              {
+                id: 'obj4-point-e',
+                reference: '4.e',
+                label: 'Déterminer le type de service approprié',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Déterminer quel type de service est approprié dans un contexte donné
+[Points] = Choix basé sur les risques identifiés et les attentes de valeur ajoutée`
+              }
+            ]
+          },
+          {
+            id: 'objectif-7',
+            label: 'Objectif 7 - Identifier les situations d\'atteinte à l\'indépendance',
+            icon: <Shield className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj7-point-a',
+                reference: '7.a',
+                label: 'Identifier les rattachements inappropriés',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Identifier les situations où le rattachement fonctionnel du RAI n'est pas approprié
+[Points] = Incapacité d'interagir directement avec le Conseil`
+              },
+              {
+                id: 'obj7-point-b',
+                reference: '7.b',
+                label: 'Décrire la responsabilité du conseil',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire la responsabilité du conseil dans la protection de l'indépendance
+[Points] = Autorisation de nomination et de révocation du RAI`
+              },
+              {
+                id: 'obj7-point-c',
+                reference: '7.c',
+                label: 'Décrire la responsabilité du RAI',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire la responsabilité du RAI dans la communication des atteintes
+[Points] = Confirmation annuelle de l'indépendance au Conseil`
+              },
+              {
+                id: 'obj7-point-d',
+                reference: '7.d',
+                label: 'Identifier les limitations budgétaires',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Identifier les situations où les limitations budgétaires peuvent restreindre
+[Points] = Réduction budgétaire empêchant l'exécution de la charte`
+              },
+              {
+                id: 'obj7-point-e',
+                reference: '7.e',
+                label: 'Décrire les effets des limitations',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire les effets des limitations de champ ou d'accès restreint
+[Points] = Restrictions d'accès aux données, installations ou personnes`
+              }
+            ]
+          },
+          {
+            id: 'objectif-8',
+            label: 'Objectif 8 - Reconnaître le rôle dans la gestion des risques',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'obj8-point-a',
+                reference: '8.a',
+                label: 'Décrire le Modèle des trois lignes',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire le Modèle des trois lignes de l'IIA
+[Points] = Rôles respectifs de la direction et de l'audit`
+              },
+              {
+                id: 'obj8-point-b',
+                reference: '8.b',
+                label: 'Identifier les responsabilités compromettantes',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Identifier les responsabilités pouvant compromettre l'indépendance
+[Points] = Prise en charge temporaire de la gestion des risques`
+              },
+              {
+                id: 'obj8-point-c',
+                reference: '8.c',
+                label: 'Décrire les sauvegardes',
+                processus: 'Section A',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section A - Fondements de l'audit interne
+[Objectifs] = Décrire les sauvegardes lors de l'exercice de telles responsabilités
+[Points] = Supervision des missions par un tiers indépendant extérieur`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'section-b',
+        label: 'Section B - Éthique et professionnalisme (20%)',
+        cycles: [
+          {
+            id: 'objectif-b1',
+            label: 'Objectif 1 - Démontrer l\'intégrité',
+            icon: <CheckSquare className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objb1-point-a',
+                reference: 'B1.a',
+                label: 'Appliquer l\'honnêteté et le courage professionnel',
+                processus: 'Section B',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section B - Éthique et professionnalisme
+[Objectifs] = Appliquer l'honnêteté et le courage professionnel face aux dilemmes
+[Points] = Communication sincère, précise et respectueuse`
+              },
+              {
+                id: 'objb1-point-b',
+                reference: 'B1.b',
+                label: 'Pratiquer un comportement légal',
+                processus: 'Section B',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section B - Éthique et professionnalisme
+[Objectifs] = Pratiquer un comportement légal et professionnel en toutes situations
+[Points] = Interdiction des activités illégales ou déshonorantes`
+              }
+            ]
+          },
+          {
+            id: 'objectif-b2',
+            label: 'Objectif 2 - Évaluer les atteintes à l\'objectivité',
+            icon: <Target className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objb2-point-a',
+                reference: 'B2.a',
+                label: 'Évaluer l\'impact de l\'auto-révision',
+                processus: 'Section B',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section B - Éthique et professionnalisme
+[Objectifs] = Évaluer l'impact de l'auto-révision et du biais de familiarité
+[Points] = Le biais d'auto-évaluation : manque de critique sur son propre travail`
+              },
+              {
+                id: 'objb2-point-b',
+                reference: 'B2.b',
+                label: 'Analyser les conflits d\'intérêts',
+                processus: 'Section B',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section B - Éthique et professionnalisme
+[Objectifs] = Analyser les situations de conflits d'intérêts potentiels
+[Points] = Intérêts professionnels ou personnels empêchant l'impartialité`
+              }
+            ]
+          },
+          {
+            id: 'objectif-b5',
+            label: 'Objectif 5 - Démontrer une conscience professionnelle',
+            icon: <User className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objb5-point-e',
+                reference: 'B5.e',
+                label: 'Pratiquer le scepticisme professionnel',
+                processus: 'Section B',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section B - Éthique et professionnalisme
+[Objectifs] = Pratiquer le scepticisme professionnel et l'évaluation critique
+[Points] = Culture d'un esprit de curiosité et remise en question`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'section-c',
+        label: 'Section C - Gouvernance, gestion des risques et contrôle (30%)',
+        cycles: [
+          {
+            id: 'objectif-c1',
+            label: 'Objectif 1 - Décrire le concept de gouvernance',
+            icon: <Building className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objc1-point-a',
+                reference: 'C1.a',
+                label: 'Décrire les rôles du Conseil et de la direction',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Décrire les rôles du Conseil, de la direction générale, de la fonction d'audit interne
+[Points] = Identification des structures de surveillance et de direction`
+              },
+              {
+                id: 'objc1-point-b',
+                reference: 'C1.b',
+                label: 'Reconnaître les cadres de référence',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Reconnaître les cadres de référence, principes et modèles de gouvernance
+[Points] = Connaissance des référentiels mondialement reconnus (COSO, ISO, etc.)`
+              }
+            ]
+          },
+          {
+            id: 'objectif-c2',
+            label: 'Objectif 2 - Reconnaître l\'impact de la culture',
+            icon: <Users className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objc2-point-a',
+                reference: 'C2.a',
+                label: 'Définir la culture organisationnelle',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Définir la culture organisationnelle et l'environnement de contrôle
+[Points] = Compréhension de la promotion d'une culture de l'éthique`
+              },
+              {
+                id: 'objc2-point-b',
+                reference: 'C2.b',
+                label: 'Définir les risques et contrôles',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Définir les risques et les contrôles liés aux missions
+[Points] = Identification des critères utilisés par la direction`
+              },
+              {
+                id: 'objc2-point-c',
+                reference: 'C2.c',
+                label: 'Reconnaître l\'impact des processus',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Reconnaître l'impact des processus de prise de décision sur la GRC
+[Points] = Analyse de la manière dont les décisions stratégiques influencent`
+              }
+            ]
+          },
+          {
+            id: 'objectif-c4',
+            label: 'Objectif 4 - Interpréter les concepts de types de risques',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objc4-point-a',
+                reference: 'C4.a',
+                label: 'Différencier les types de risques',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Différencier les types de risques : stratégiques, opérationnels, financiers
+[Points] = Gestion des risques environnementaux, sociaux et de responsabilité`
+              },
+              {
+                id: 'objc4-point-b',
+                reference: 'C4.b',
+                label: 'Comparer risques inhérents et résiduels',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Comparer et opposer les risques inhérents et résiduels
+[Points] = Définition du risque inhérent comme l'absence totale d'action`
+              }
+            ]
+          },
+          {
+            id: 'objectif-c5',
+            label: 'Objectif 5 - Interpréter les concepts de gestion des risques',
+            icon: <BarChart3 className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objc5-point-a',
+                reference: 'C5.a',
+                label: 'Définir la gestion des risques',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Définir la gestion des risques
+[Points] = Processus d'identification, d'évaluation et de maîtrise des événements`
+              },
+              {
+                id: 'objc5-point-b',
+                reference: 'C5.b',
+                label: 'Reconnaître l\'appétence pour le risque',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Reconnaître l'appétence pour le risque et la tolérance au risque
+[Points] = L'appétence est le niveau de risque qu'une organisation est prête à accepter`
+              }
+            ]
+          },
+          {
+            id: 'objectif-c7',
+            label: 'Objectif 7 - Interpréter les concepts de contrôle interne',
+            icon: <Shield className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objc7-point-b',
+                reference: 'C7.b',
+                label: 'Décrire les types de contrôles internes',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Décrire et évaluer les types de contrôles internes
+[Points] = Application des contrôles pour ramener les risques sous le seuil`
+              },
+              {
+                id: 'objc7-point-c',
+                reference: 'C7.c',
+                label: 'Recommander des contrôles appropriés',
+                processus: 'Section C',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section C - Gouvernance, gestion des risques et contrôle
+[Objectifs] = Recommander des contrôles appropriés pour atténuer les risques
+[Points] = Détermination des mesures pour ramener le risque à un niveau acceptable`
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'section-d',
+        label: 'Section D - Risques de fraude (15%)',
+        cycles: [
+          {
+            id: 'objectif-d1',
+            label: 'Objectif 1 - Décrire les concepts de risques de fraude',
+            icon: <AlertTriangle className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objd1-point-a',
+                reference: 'D1.a',
+                label: 'Décrire le triangle de la fraude',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Décrire les concepts du triangle de la fraude
+[Points] = Définition de l'acte intentionnel caractérisé par la tromperie`
+              },
+              {
+                id: 'objd1-point-c',
+                reference: 'D1.c',
+                label: 'Identifier les schémas de fraude courants',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Identifier les schémas de fraude courants
+[Points] = Développement des connaissances sur le détournement d'actifs`
+              }
+            ]
+          },
+          {
+            id: 'objectif-d3',
+            label: 'Objectif 3 - Évaluer le potentiel de fraude',
+            icon: <FileSearch className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objd3-point-b',
+                reference: 'D3.b',
+                label: 'Détecter les signaux d\'alerte',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Détecter et évaluer les signaux d'alerte (red flags)
+[Points] = Évaluation de la probabilité de fraude lors de la planification`
+              },
+              {
+                id: 'objd3-point-c',
+                reference: 'D3.c',
+                label: 'Reconnaître le rôle de signalement',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Reconnaître le rôle de l'auditeur interne dans le signalement
+[Points] = Obligation de signaler les incidents aux entités ayant l'autorité`
+              }
+            ]
+          },
+          {
+            id: 'objectif-d4',
+            label: 'Objectif 4 - Décrire les contrôles pour prévenir la fraude',
+            icon: <Shield className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objd4-point-a',
+                reference: 'D4.a',
+                label: 'Reconnaître l\'impact du tone at the top',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Reconnaître l'impact du ton donné au sommet sur la probabilité de fraude
+[Points] = Promotion d'une culture fondée sur l'éthique par le Conseil`
+              },
+              {
+                id: 'objd4-point-b',
+                reference: 'D4.b',
+                label: 'Reconnaître la séparation des tâches',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Reconnaître l'application appropriée de la séparation des tâches
+[Points] = Évaluation de la structure opérationnelle pour limiter les opportunités`
+              }
+            ]
+          },
+          {
+            id: 'objectif-d5',
+            label: 'Objectif 5 - Reconnaître les techniques d\'enquête',
+            icon: <FileSearch className="w-4 h-4" />,
+            tests: [
+              {
+                id: 'objd5-point-a',
+                reference: 'D5.a',
+                label: 'Définir le rôle dans les enquêtes',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Définir le rôle de la fonction d'audit interne en matière d'enquêtes
+[Points] = Réalisation d'investigations comme service de conseil spécifique`
+              },
+              {
+                id: 'objd5-point-e',
+                reference: 'D5.e',
+                label: 'Reconnaître les opportunités de coordination',
+                processus: 'Section D',
+                command: `[Command] = cours
+[Partie] = partie 1
+[Section] = Section D - Risques de fraude
+[Objectifs] = Reconnaître les opportunités de coordination avec les enquêteurs
+[Points] = Examen des évaluations de risques réalisées par les enquêteurs`
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     id: 'bibliotheque',
     label: 'Bibliothèque',
     icon: <BookOpen className="w-4 h-4" />,
@@ -1723,6 +2734,7 @@ const getModeIcon = (modeId: string) => {
     case 'normal': return <User className="w-4 h-4" />;
     case 'demo': return <Play className="w-4 h-4" />;
     case 'avance': return <Zap className="w-4 h-4" />;
+    case 'manuel': return <Settings className="w-4 h-4" />;
     default: return null;
   }
 };
@@ -1779,7 +2791,7 @@ const SubMenuPortal: React.FC<SubMenuPortalProps> = ({ etape, anchorRect, onMode
           </div>
         )}
       </div>
-      {MODES.map(mode => (
+      {(etape.modes || MODES).map(mode => (
         <button
           key={mode.id}
           type="button"
@@ -1883,7 +2895,8 @@ const DemarrerMenu: React.FC<DemarrerMenuProps> = ({ onInsertCommand, disabled =
 
   const handleModeClick = (mode: ModeItem) => {
     if (activeEtape) {
-      const finalCommand = mode.prefix + activeEtape.command;
+      // Si le mode a sa propre commande, l'utiliser, sinon utiliser l'ancienne logique
+      const finalCommand = mode.command || (mode.prefix && activeEtape.command ? mode.prefix + activeEtape.command : activeEtape.command || '');
       
       try {
         onInsertCommand(finalCommand);
